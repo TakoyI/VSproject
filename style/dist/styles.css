@@ -10,3 +10,7 @@ body {
   text-align: center;
   font-size: 30px;
 }
+
+main {
+  padding-top: 200px;
+}
