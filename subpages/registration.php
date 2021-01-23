@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!doctype html>
 <html lang="ru">
   <head>
@@ -37,17 +38,19 @@
    <div class="col">
     <form class="form" method="POST"  action="regform.php">
       <div class="form-group mb-2">
-        <input type="text" name="email" class="form-control" placeholder="email@example.com">
+        <input type="text" name="email" class="form-control" minlength="7" maxlength="40" required placeholder="example@mail.ru">
       </div>
       <div class="form-group mb-2">
-        <input type="text" name="name" class="form-control" id="staticEmail2" placeholder="User name">
+        <input type="text" name="name" class="form-control" id="staticEmail2" placeholder="User name" minlength="3">
       </div>
       <div class="form-group">
-        <input type="password" name="pass1" class="form-control mb-2" id="inputPassword2" placeholder="Password">
+        <input type="password" name="pass1" class="form-control mb-2" id="inputPassword2" placeholder="Password" minlength="8" maxlength="30" required>
         <input type="password" name="pass2" class="form-control mb-2"  placeholder="Repeat Password">
       </div>
       <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
+      <button><a href="login.php">Авторизация</a></button>
     </form>
+
   </div>
 </main>
 

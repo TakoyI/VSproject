@@ -1,46 +1,61 @@
 <?php 
 session_start();
-$email = filter_var(trim($_POST['email']), FILTER_SANITIZE_STRING);
-$name = filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING);
-$pass1 = filter_var(trim($_POST['pass1']), FILTER_SANITIZE_STRING);
-$pass2 = filter_var(trim($_POST['pass2']), FILTER_SANITIZE_STRING);
-//Connection MySQL
-require ('../../connectdb.php');
-//Check user name for correct
-$namecheck = $dbc->query("SELECT 1 FROM 'users' WHERE 'name' = '$name'");
-if (!empty($namecheck)) {
-    $_SESSION['namenocorrect'] = 'Имя пользователя уже зарегистрированно!';
-    exit();
-//    header('Location: authentification.html');
+$user = array(
+    'name' => filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING),
+    'email' => filter_var(trim($_POST['email']), FILTER_SANITIZE_STRING),
+    'pass1' => filter_var(trim($_POST['pass1']), FILTER_SANITIZE_STRING),
+    'pass2' => filter_var(trim($_POST['pass2']), FILTER_SANITIZE_STRING)
+ );
+ echo "Поиск: ";
+ print_r($user);
+ //CONNECTION MySQL
+require_once('../../connectdb.php');
+ //Check data correct
+$result1 = mysqli_query($dbc, "SELECT `name` FROM `users` WHERE `name` = '{$user['name']}'");
+$result2 = mysqli_query($dbc, "SELECT `email` FROM `users` WHERE `email` = '{$user['email']}'");
+$namecheck = mysqli_fetch_assoc($result1);
+$mailheck = mysqli_fetch_assoc($result2);
+//NAME check
+if (isset($namecheck)){
+    $_SESSION['namecorrectno'] = "Пользователь уже существует";
+    echo $_SESSION['namecorrectno'];
 } else {
-    $_SESSION['namecorrect'] = 'Имя пользователя прошло проверку!';
+    $_SESSION['namecorrect'] = "Имя пользователя свободно для регистрации!";
+    echo $_SESSION['namecorrect'];
+    echo "</br>";
 }
-//Check Email for correct
-$emailcheck = $dbc->query("SELECT 1 FROM 'users' WHERE'email' = '$email'");
-if (!preg_match("/\b[\w. -]+@[\w. -]+\.[A-Za-z]{2,6}\b/",$email) || !empty($emailcheck)) {
-    $_SESSION['emailnocorrect'] = 'Email не корректен или уже зарегистрирован!';
-    exit(); header('Location: authentification.html');
+//EMAIL check
+if (isset($mailheck)) {
+    $_SESSION['emailcheckno'] = "Email уже зарегистрирован!";
+    echo $_SESSION['emailcheckno']; exit();
 } else {
-    $_SESSION['emailcorrect'] = 'Email прошёл проверку!';
+    if (!preg_match("/\b[\w. -]+@[\w. -]+\.[A-Za-z]{2,6}\b/", $user['email'])) {
+        $_SESSION['emailcorrectno'] = "Email не соответствует стандартам!";
+        echo $_SESSION['emailcorrectno'];
+        exit();
+    }
+    $_SESSION['emailcorrect'] = "Email доступен для регистрации!";
+    echo $_SESSION['emailcorrect'];
 }
-//Check pass for correct
-if ($pass1 != $pass2 ) {
-    $_SESSION['passcheck'] = 'Пароли не совпадают!';
-    exit();
-} else if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/", $pass1)) {
-    $_SESSION['passcheck'] = 'Пароль должен содержать как минимум одну заглавную букву и его длина не может быть менее 8 символов. Нарушено одно из условий!';
-    exit(); header('Location: authentification.html');
+//pass check
+if ($user['pass1'] != $user['pass2']) {
+    $_SESSION['passcorrectno'] = "Пароли не совпадаю!";
+    echo $_SESSION['passcorrectno']; exit();
 } else {
-    $_SESSION['passcorrect'] = 'Пароль прошёл проверку и может быть использован при регистрации!';
+    if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/", $user['pass1'])) {
+        $_SESSION['passcheckno'] = "Пароль должен содержать как минимум одну заглавную букву и его длина не может быть менее 8 символов. Нарушено одно из условий!";
+        echo $_SESSION['passcheckno'];
+        exit();
+    }
+
 }
-//Coding password
-$pass1 = md5($pass1, "ler4p3k1[plzv452");
-//Create User in DB
-$request= "INSERT INTO users (`email`,`name`, `pass`) VALUES('$email', '$name', '$pass1')";
-if (mysqli_query($dbc, $request)){
-    $_SESSION['registcorrect'] = 'Регистрация завершена успешно!';
+// $user['pass1'] = md5('olkgpergksoiujlcxkbp123ktp4o56k3022kd;x', $user['pass1']);
+echo "Пароли впорядке!";
+//Build user in MySQL
+if (mysqli_query($dbc, "INSERT INTO `users`(`name`, `email`, `pass`) VALUES ('{$user['name']}', '{$user['email']}', '{$user['pass1']}')")) {
+    echo "Регистрация прошла успешно!";
 } else {
-    $_SESSION['registerror'] = 'Произошла неизвестная ошибка, пожалуйста сообщите нам о ней...';
+    echo "Произошла неизвестная ошибка!";
 }
-header('Location: authentification.html');
+// header('Location: registration.php');
 ?>

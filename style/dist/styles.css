@@ -18,3 +18,9 @@ main .form-group {
   margin-left: 0;
   margin-right: 0;
 }
+main .form-group .msgr {
+  color: red;
+}
+main .form-group .msgg {
+  color: green;
+}

@@ -1,10 +1,11 @@
+<?php session_start(); ?>
 <!doctype html>
 <html lang="ru">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <link rel="stylesheet" href="style/dist/styles.css">
+    <link rel="stylesheet" href="../style/dist/styles.css">
 
     <title>Hello, world!</title>
   </head>
@@ -27,7 +28,7 @@
           <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Мои интересы</a>
         </li>
         <li class="col nav-item">
-          <a class="nav-link" href="/subpages/registration.html" tabindex="-1" aria-disabled="true">Личный кабинет</a>
+          <a class="nav-link" href="registration.html" tabindex="-1" aria-disabled="true">Личный кабинет</a>
         </li>
       </ul>
     </div>
@@ -35,20 +36,26 @@
 </header>
 <main class="content container">
    <div class="col">
-    <form class="form" method="POST"  action="">
+    <form class="form" method="POST"  action="logform.php">
       <div class="form-group mb-2">
-        <label for="staticEmail2" class="sr-only">Email</label>
-        <input type="text" class="form-control" id="staticEmail2" placeholder="email@example.com">
+        <input type="text" name="emailin" class="form-control" placeholder="email@example.com" required>
       </div>
-      <div class="form-group mb-2">
-        <label for="staticEmail2" class="sr-only">Nickname</label>
-        <input type="text" class="form-control" id="staticEmail2" placeholder="email@example.com">
+      <div class="form-group">
+        <input type="password" name="passin" class="form-control mb-2" id="inputPassword2" placeholder="Password">
       </div>
-      <div class="form-group mb-2">
-        <label for="inputPassword2" class="sr-only">Password</label>
-        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-      </div>
-      <a href=""><button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
+      <button type="submit" class="btn btn-primary mb-2">Autorize</button>
+      </button>
+      <?php ini_set("display_errors", 0);
+      if ($_SESSION['hello']){
+        echo "<p>" . $_SESSION['hello'] . "</p>";
+        unset($_SESSION['hello']);
+      } elseif($_SESSION['error']) {
+        echo "<p>" . $_SESSION['error'] . "</p>";
+        unset($_SESSION['error']);
+      } else {
+        echo "<p>Попробуйте снова</p>";
+      }
+      ?>
     </form>
   </div>
 </main>
